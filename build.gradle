@@ -1,0 +1,149 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath(
+                [group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: springBootVersion],
+                [group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.0.4'],
+                [group: 'se.transmode.gradle', name: 'gradle-docker', version: '1.2'],
+        )
+    }
+}
+
+plugins {
+    // Basic Plugins
+    id 'java'
+    id 'groovy'
+    id 'application'
+    id 'project-report'
+
+    // Dependency Management Support Plugins
+    id 'io.spring.dependency-management' version '0.6.1.RELEASE'
+    id 'com.github.ben-manes.versions' version '0.13.0'
+
+    // Versioning Plugins
+    id 'nebula.release' version '4.1.0'
+    id 'com.gorylenko.gradle-git-properties' version '1.4.17'
+    id 'nebula.info' version '3.2.1'
+
+    // Quality / Documentation Plugins
+    id 'org.sonarqube' version '2.1'
+    id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+apply plugin: 'ca.cutterslade.analyze'
+apply plugin: 'spring-boot'
+apply plugin: 'docker'
+
+apply from: 'gradle/code-coverage.gradle'
+apply from: 'gradle/asciidoctor.gradle'
+apply from: 'gradle/reject-snapshot-dependencies.gradle'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+mainClassName = 'com.muxi.selfiepos.Application'
+
+repositories {
+    jcenter()
+}
+
+configurations {
+    compile {
+        exclude module: "spring-boot-starter-tomcat"
+        exclude module: "groovy"
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "io.spring.platform:platform-bom:$springPlatformVersion"
+    }
+}
+
+// Spring Platform Athens-RELEASE overrides
+ext['guava.version'] = guavaVersion
+
+dependencies {
+    compileOnly(
+            [group: "org.projectlombok", name: "lombok"],
+    )
+    compile(
+            [group: "com.google.guava", name: "guava"],
+    )
+    runtime(
+            [group: "ch.qos.logback", name: "logback-classic"],
+            [group: "ch.qos.logback", name: "logback-access"],
+    )
+    testCompileOnly(
+            [group: "org.projectlombok", name: "lombok"],
+    )
+    testCompile(
+            [group: "org.codehaus.groovy", name: "groovy-all"],
+            [group: "org.spockframework", name: "spock-core"],
+    )
+    testRuntime(
+            [group: 'com.athaydes', name: 'spock-reports', version: spockReportsVersion],
+    )
+}
+
+analyzeClassesDependencies {
+    justWarn = true
+}
+
+analyzeTestClassesDependencies {
+    justWarn = true
+}
+
+gitProperties {
+    dateFormat = "yyyy-MM-dd'T'HH:mmZ"
+    dateFormatTimeZone = "America/Sao_Paulo"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
+}
+
+springBoot {
+    buildInfo()
+}
+
+test {
+    // show standard out and standard error of the test JVM(s) on the console
+    testLogging.showStandardStreams = true
+}
+
+distributions {
+    main {
+        contents {
+            from('config') {
+                into 'config'
+            }
+        }
+    }
+}
+
+bootRun {
+    // support passing -Dsystem.property=value to bootRun task
+    systemProperties = System.properties
+}
+
+docker {
+    baseImage 'davidcaste/alpine-java-unlimited-jce'
+    maintainer 'Eliezio Oliveira "ebo@pobox.com"'
+}
+
+distDocker {
+    description "Packs the project's JVM application as a Docker image.\n\t\tUse 'docker.registry' to set registry's host and port"
+
+    tagVersion = "${version}" - ~/-.*/
+    registry = project.findProperty('docker.registry')
+
+    setEnvironment 'JAVA_OPTS', '-Xmx384m -Djava.security.egd=file:/dev/./urandom'
+    def appHome = "/${project.name}-${version}"
+    workingDir appHome
+    volume "$appHome/config"
+    exposePort 8080
+}
