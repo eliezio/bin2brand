@@ -67,21 +67,21 @@ ext['guava.version'] = guavaVersion
 
 dependencies {
     compileOnly(
-            [group: "org.projectlombok", name: "lombok"],
+            [group: 'org.projectlombok', name: 'lombok'],
     )
     compile(
-            [group: "com.google.guava", name: "guava"],
+            [group: 'one.util', name: 'streamex', version: '0.6.2'],
     )
     runtime(
-            [group: "ch.qos.logback", name: "logback-classic"],
-            [group: "ch.qos.logback", name: "logback-access"],
+            [group: 'ch.qos.logback', name: 'logback-classic'],
+            [group: 'ch.qos.logback', name: 'logback-access'],
     )
     testCompileOnly(
-            [group: "org.projectlombok", name: "lombok"],
+            [group: 'org.projectlombok', name: 'lombok'],
     )
     testCompile(
-            [group: "org.codehaus.groovy", name: "groovy-all"],
-            [group: "org.spockframework", name: "spock-core"],
+            [group: 'org.codehaus.groovy', name: 'groovy-all'],
+            [group: 'org.spockframework', name: 'spock-core'],
     )
     testRuntime(
             [group: 'com.athaydes', name: 'spock-reports', version: spockReportsVersion],
