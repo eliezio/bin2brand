@@ -20,7 +20,7 @@ class PrefixClassifierSpec extends Specification {
 
     @Unroll
     def "find the brand of the BIN #bin"() {
-        when:
+        given:
         def prefixClassifier = new PrefixClassifier([
                 "Visa"      : "4",
                 "Mastercard": "51-55,2221-2720",
@@ -34,6 +34,8 @@ class PrefixClassifierSpec extends Specification {
                 "JCB"       : "35",
                 "Hipercard" : "384100,384140,384160,606282,637095,637568,637599,637609,637612",
         ])
+
+        when:
         final Optional<String> brand = prefixClassifier.findName(bin)
 
         then:

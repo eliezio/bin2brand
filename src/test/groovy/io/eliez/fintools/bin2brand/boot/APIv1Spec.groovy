@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @TestPropertySource("file:config/application-test.properties")
 @AutoConfigureRestDocs("build/generated-snippets")
-class APIv1Test extends Specification {
+class APIv1Spec extends Specification {
 
     @Autowired
     MockMvc mockMvc
@@ -35,7 +35,7 @@ class APIv1Test extends Specification {
                 .andExpect(status().isNotFound())
 
         where:
-        bin << ['1000']
+        bin << ['100000']
     }
 
     @Unroll
