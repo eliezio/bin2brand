@@ -11,6 +11,8 @@ jacoco {
 jacocoTestReport {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
-    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
 }
 
+test {
+    finalizedBy jacocoTestReport
+}

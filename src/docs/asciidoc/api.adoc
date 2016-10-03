@@ -1,0 +1,34 @@
+= Bin2Brand
+Eliézio Oliveira;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:sectlinks:
+
+Versão {project-version}
+
+== Introdução
+
+NOTE: Os exemplos de solicitação usam a ferramenta HTTPie (http://httpie.org/).
+
+== Serviços
+
+=== /v1/card-brand
+Obtém a bandeira com base no BIN do cartão.
+
+Solicitação:
+
+include::{snippets}/v1/get-card-brand/httpie-request.adoc[]
+
+Campos da solicitação:
+
+include::{snippets}/v1/get-card-brand/request-parameters.adoc[]
+
+Resposta:
+
+include::{snippets}/v1/get-card-brand/http-response.adoc[]
+
+Campos da resposta:
+
+include::{snippets}/v1/get-card-brand/response-fields.adoc[]
+

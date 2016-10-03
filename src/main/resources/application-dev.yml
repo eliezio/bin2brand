@@ -1,0 +1,7 @@
+endpoints:
+  shutdown:
+    enabled: true
+management:
+  info:
+    git:
+      mode: full

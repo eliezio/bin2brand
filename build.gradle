@@ -19,21 +19,20 @@ plugins {
     id 'project-report'
 
     // Dependency Management Support Plugins
-    id 'io.spring.dependency-management' version '0.6.1.RELEASE'
     id 'com.github.ben-manes.versions' version '0.13.0'
 
     // Versioning Plugins
     id 'nebula.release' version '4.1.0'
-    id 'com.gorylenko.gradle-git-properties' version '1.4.17'
     id 'nebula.info' version '3.2.1'
+    id 'com.gorylenko.gradle-git-properties' version '1.4.17'
 
     // Quality / Documentation Plugins
     id 'org.sonarqube' version '2.1'
     id 'org.asciidoctor.convert' version '1.5.3'
 }
 
-apply plugin: 'ca.cutterslade.analyze'
 apply plugin: 'spring-boot'
+apply plugin: 'ca.cutterslade.analyze'
 apply plugin: 'docker'
 
 apply from: 'gradle/code-coverage.gradle'
@@ -43,36 +42,39 @@ apply from: 'gradle/reject-snapshot-dependencies.gradle'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-mainClassName = 'com.muxi.selfiepos.Application'
+mainClassName = 'io.eliez.fintools.bin2brand.boot.Application'
 
 repositories {
     jcenter()
+    maven { url sonatypeSnapshotsRepo }
 }
 
 configurations {
     compile {
-        exclude module: "spring-boot-starter-tomcat"
-        exclude module: "groovy"
+        exclude module: 'spring-boot-starter-tomcat'
+        exclude module: 'groovy'
     }
 }
-
-dependencyManagement {
-    imports {
-        mavenBom "io.spring.platform:platform-bom:$springPlatformVersion"
-    }
-}
-
-// Spring Platform Athens-RELEASE overrides
-ext['guava.version'] = guavaVersion
 
 dependencies {
     compileOnly(
             [group: 'org.projectlombok', name: 'lombok'],
     )
     compile(
-            [group: 'one.util', name: 'streamex', version: '0.6.2'],
+            [group: 'one.util', name: 'streamex', version: streamExVersion],
+
+            [group: 'org.springframework', name: 'spring-web'],
+            [group: 'org.springframework.boot', name: 'spring-boot'],
+            [group: 'org.springframework.boot', name: 'spring-boot-autoconfigure'],
     )
     runtime(
+            [group: 'org.springframework.boot', name: 'spring-boot-starter-web'],
+            [group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'],
+            [group: 'org.springframework.boot', name: 'spring-boot-starter-jetty'],
+
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-core'],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind'],
+
             [group: 'ch.qos.logback', name: 'logback-classic'],
             [group: 'ch.qos.logback', name: 'logback-access'],
     )
@@ -81,9 +83,19 @@ dependencies {
     )
     testCompile(
             [group: 'org.codehaus.groovy', name: 'groovy-all'],
-            [group: 'org.spockframework', name: 'spock-core'],
+            [group: 'org.spockframework', name: 'spock-core', version: spockVersion],
+            [group: 'org.springframework', name: 'spring-beans'],
+            [group: 'org.springframework', name: 'spring-test'],
+            [group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure'],
+            [group: 'org.hamcrest', name: 'hamcrest-core'],
+            [group: 'org.springframework.restdocs', name: 'spring-restdocs-core'],
+            [group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc'],
     )
     testRuntime(
+            [group: 'org.spockframework', name: 'spock-spring', version: spockVersion],
+            [group: 'org.springframework.boot', name: 'spring-boot-test'],
+            [group: 'org.mockito', name: 'mockito-core'],
+            [group: 'com.jayway.jsonpath', name: 'json-path'],
             [group: 'com.athaydes', name: 'spock-reports', version: spockReportsVersion],
     )
 }
@@ -98,7 +110,6 @@ analyzeTestClassesDependencies {
 
 gitProperties {
     dateFormat = "yyyy-MM-dd'T'HH:mmZ"
-    dateFormatTimeZone = "America/Sao_Paulo"
 }
 
 tasks.withType(JavaCompile) {
