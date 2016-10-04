@@ -9,10 +9,10 @@ class PrefixClassifierSpec extends Specification {
     @Issue("fixed on commit https://github.com/erikhenrique/bin-cc/commit/ee08f208d59f4587fc5827b3f261700acca0d63e")
     def "fails with conflicting ranges"() {
         when:
-        new PrefixClassifier([
+        PrefixClassifier.fromTextTable([
                 "Diners"   : "301,305,36,38",
                 "Hipercard": "38,60"
-        ])
+        ], RangePattern.NUMERIC)
 
         then:
         thrown(ConflictingRangesException)
@@ -21,7 +21,7 @@ class PrefixClassifierSpec extends Specification {
     @Unroll
     def "find the brand of the BIN #bin"() {
         given:
-        def prefixClassifier = new PrefixClassifier([
+        def prefixClassifier = PrefixClassifier.fromTextTable([
                 "Visa"      : "4",
                 "Mastercard": "51-55,2221-2720",
                 "Diners"    : "301,305,36,38",
@@ -33,10 +33,10 @@ class PrefixClassifierSpec extends Specification {
                 "Aura"      : "50",
                 "JCB"       : "35",
                 "Hipercard" : "384100,384140,384160,606282,637095,637568,637599,637609,637612",
-        ])
+        ], RangePattern.NUMERIC)
 
         when:
-        final Optional<String> brand = prefixClassifier.findName(bin)
+        final Optional<String> brand = prefixClassifier.findLabel(bin)
 
         then:
         brand.isPresent()

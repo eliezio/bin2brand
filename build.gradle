@@ -63,12 +63,16 @@ dependencies {
     compile(
             [group: 'one.util', name: 'streamex', version: streamExVersion],
 
+            [group: 'org.springframework', name: 'spring-context'],
             [group: 'org.springframework', name: 'spring-web'],
             [group: 'org.springframework.boot', name: 'spring-boot'],
             [group: 'org.springframework.boot', name: 'spring-boot-autoconfigure'],
+            [group: 'javax.validation', name: 'validation-api', version: validationApiVersion],
+            [group: 'javax.servlet', name: 'javax.servlet-api'],
     )
     runtime(
             [group: 'org.springframework.boot', name: 'spring-boot-starter-web'],
+            [group: 'org.springframework.boot', name: 'spring-boot-starter-validation'],
             [group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'],
             [group: 'org.springframework.boot', name: 'spring-boot-starter-jetty'],
 

@@ -1,15 +1,21 @@
 package io.eliez.fintools.bin2brand.boot;
 
 import io.eliez.fintools.bin2brand.PrefixClassifier;
-import lombok.Value;
+import io.eliez.fintools.bin2brand.RangePattern;
+import io.eliez.fintools.validation.BIN;
 import one.util.streamex.EntryStream;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1")
 @CrossOrigin
+@Validated
 public class APIv1 {
-    private final PrefixClassifier prefixClassifier = new PrefixClassifier(EntryStream.of(
+    private final PrefixClassifier prefixClassifier = PrefixClassifier.fromTextTable(EntryStream.of(
             "Visa",         "4",
             "Mastercard",   "51-55,2221-2720",
             "Diners",       "301,305,36,38",
@@ -21,17 +27,12 @@ public class APIv1 {
             "Aura",         "50",
             "JCB",          "35",
             "Hipercard",    "384100,384140,384160,606282,637095,637568,637599,637609,637612"
-    ).toMap());
+    ).toMap(), RangePattern.NUMERIC);
 
     @GetMapping("/card-brand")
-    public Brand findBrand(@RequestParam String bin) {
-        return prefixClassifier.findName(bin)
-                .map(Brand::new)
+    public Map findBrand(@BIN @RequestParam String bin) {
+        return prefixClassifier.findLabel(bin)
+                .map(n -> Collections.singletonMap("name", n))
                 .orElseThrow(ResourceNotFoundException::new);
-    }
-
-    @Value
-    private static class Brand {
-        String name;
     }
 }

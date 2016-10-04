@@ -10,30 +10,35 @@ import java.util.Optional;
 
 public class PrefixClassifier {
 
-    private final List<NumericPrefixRange> prefixes;
+    private final List<LabeledPrefixRange> prefixes;
 
-    public PrefixClassifier(Map<String, String> namedPrefixRanges) {
-        this.prefixes = loadPrefixes(namedPrefixRanges);
+    public PrefixClassifier(Map<String, List<PrefixRange>> rangesTable) {
+        this.prefixes = loadPrefixes(rangesTable);
     }
 
-    public Optional<String> findName(String target) {
+    public Optional<String> findLabel(String target) {
         return StreamEx.of(prefixes)
                 .findFirst(prefix -> prefix.contains(target))
-                .map(NumericPrefixRange::label);
+                .map(LabeledPrefixRange::label);
     }
 
-    private List<NumericPrefixRange> loadPrefixes(Map<String, String> rangesMap) {
-        final List<NumericPrefixRange> ranges = EntryStream.of(rangesMap)
-                .flatMapKeyValue((k, v) -> StreamEx.split(v, ",").map(s -> NumericPrefixRange.parse(k, s)))
-                .sorted(Comparator.comparingInt(NumericPrefixRange::length)
+    public static PrefixClassifier fromTextTable(Map<String, String> rangesTextTable, RangePattern pattern) {
+        return new PrefixClassifier(EntryStream.of(rangesTextTable)
+                .mapValues(vv -> StreamEx.split(vv, ",").map(v -> PrefixRangeParser.parse(v, pattern)).toList())
+                .toMap());
+    }
+    private List<LabeledPrefixRange> loadPrefixes(Map<String, List<PrefixRange>> rangesTable) {
+        final List<LabeledPrefixRange> ranges = EntryStream.of(rangesTable)
+                .flatMapKeyValue((k, vv) -> StreamEx.of(vv).map(v -> new LabeledPrefixRange(k, v)))
+                .sorted(Comparator.comparingInt(LabeledPrefixRange::length)
                         .reversed()
-                        .thenComparing(NumericPrefixRange::lower))
+                        .thenComparing(LabeledPrefixRange::lower))
                 .toList();
         validateRanges(ranges);
         return ranges;
     }
 
-    private void validateRanges(List<NumericPrefixRange> ranges) {
+    private void validateRanges(List<LabeledPrefixRange> ranges) {
         StreamEx.of(ranges)
                 .forPairs((npr1, npr2) -> {
                     if ((!(npr1.label().equals(npr2.label()))
