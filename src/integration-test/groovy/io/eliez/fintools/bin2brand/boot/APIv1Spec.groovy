@@ -16,6 +16,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -27,29 +28,45 @@ class APIv1Spec extends Specification {
     MockMvc mockMvc
 
     @Unroll
-    def "fails if BIN is invalid (#bin)"() {
+    def "fails with NOT_FOUND when BIN is unallocated to any brand (BIN=#bin)"() {
         expect:
         mockMvc.perform(get('/v1/card-brand').param('bin', bin))
                 .andExpect(status().isNotFound())
+                .andDo(print())
 
         where:
         bin << ['100000']
     }
 
     @Unroll
-    def "can classify valid BIN=#bin"() {
+    def "fails with BAD_REQUEST when BIN is ill-formed (#bin) -- #description"() {
+        expect:
+        mockMvc.perform(get('/v1/card-brand').param('bin', bin))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+
+        where:
+        bin       | description
+        '43210A'  | 'has a non-decimal char'
+        '4321321' | 'if longer thant 6 digits'
+        '43213'   | 'if shorter thant 6 digits'
+    }
+
+    @Unroll
+    def "succeeds to find the brand of a valid BIN=#bin"() {
         expect: 'classification succeeds'
         mockMvc.perform(get('/v1/card-brand').param('bin', bin))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath('$.name', is(expectedBrand)))
+                .andExpect(jsonPath('$.brand', is(expectedBrand)))
                 .andDo(document('v1/get-card-brand',
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName('bin').description('Bank Identification Number, i.e., the first 6 digits of a card number'),
                         ),
                         responseFields(
-                                fieldWithPath('name').description('The brand\'s name')
+                                fieldWithPath('brand').description('The brand\'s name')
                 )))
+                .andDo(print())
 
         where:
         bin      || expectedBrand

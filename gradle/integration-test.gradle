@@ -1,0 +1,31 @@
+
+sourceSets {
+    integrationTest {
+        java.srcDir file('src/integration-test/java')
+        groovy.srcDir file('src/integration-test/groovy')
+        resources.srcDir  file('src/integration-test/resources')
+    }
+}
+
+dependencies {
+    integrationTestCompile sourceSets.main.output
+    integrationTestCompile sourceSets.test.output
+    integrationTestCompile configurations.testCompile
+    integrationTestRuntime configurations.testRuntime
+}
+
+task integrationTest(type: Test) {
+    group 'Verification'
+    description 'Runs the integration tests.'
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    //systemProperties['jar.path'] = jar.archivePath
+
+    // show standard out and standard error of the test JVM(s) on the console
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        showStandardStreams = true
+    }
+}
+
+//check.dependsOn integrationTest

@@ -3,12 +3,12 @@ ext {
     snippetsDir = file('build/generated-snippets')
 }
 
-test {
+integrationTest {
     outputs.dir snippetsDir
 }
 
 asciidoctor {
-    dependsOn test
+    dependsOn integrationTest
     inputs.property('version', "$project.version")
     inputs.dir snippetsDir
     attributes 'snippets': snippetsDir

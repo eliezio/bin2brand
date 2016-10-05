@@ -1,4 +1,7 @@
 buildscript {
+    ext {
+        springBootVersion = '1.4.1.RELEASE'
+    }
     repositories {
         jcenter()
     }
@@ -23,7 +26,7 @@ plugins {
 
     // Versioning Plugins
     id 'nebula.release' version '4.1.0'
-    id 'nebula.info' version '3.2.1'
+    id 'nebula.info' version '3.3.3'
     id 'com.gorylenko.gradle-git-properties' version '1.4.17'
 
     // Quality / Documentation Plugins
@@ -35,6 +38,7 @@ apply plugin: 'spring-boot'
 apply plugin: 'ca.cutterslade.analyze'
 apply plugin: 'docker'
 
+apply from: 'gradle/integration-test.gradle'
 apply from: 'gradle/code-coverage.gradle'
 apply from: 'gradle/asciidoctor.gradle'
 apply from: 'gradle/reject-snapshot-dependencies.gradle'
@@ -42,7 +46,16 @@ apply from: 'gradle/reject-snapshot-dependencies.gradle'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+group = 'io.eliez.fintools'
 mainClassName = 'io.eliez.fintools.bin2brand.boot.Application'
+
+ext {
+    // Required for Spock snapshot verions
+    sonatypeSnapshotsRepo = 'https://oss.sonatype.org/content/repositories/snapshots'
+    spockReportsVersion = '1.2.13'
+    spockVersion = '1.1-groovy-2.4-SNAPSHOT'
+    validationApiVersion = '1.1.0.Final'
+}
 
 repositories {
     jcenter()
@@ -61,7 +74,7 @@ dependencies {
             [group: 'org.projectlombok', name: 'lombok'],
     )
     compile(
-            [group: 'one.util', name: 'streamex', version: streamExVersion],
+            [group: 'one.util', name: 'streamex', version: '0.6.2'],
 
             [group: 'org.springframework', name: 'spring-context'],
             [group: 'org.springframework', name: 'spring-web'],
@@ -88,14 +101,29 @@ dependencies {
     testCompile(
             [group: 'org.codehaus.groovy', name: 'groovy-all'],
             [group: 'org.spockframework', name: 'spock-core', version: spockVersion],
+    )
+    testRuntime(
+            [group: 'com.athaydes', name: 'spock-reports', version: spockReportsVersion],
+    )
+
+    integrationTestCompileOnly(
+            [group: 'org.projectlombok', name: 'lombok'],
+    )
+    integrationTestCompile(
+            [group: 'org.codehaus.groovy', name: 'groovy-all'],
+            [group: 'org.spockframework', name: 'spock-core', version: spockVersion],
             [group: 'org.springframework', name: 'spring-beans'],
             [group: 'org.springframework', name: 'spring-test'],
             [group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure'],
             [group: 'org.hamcrest', name: 'hamcrest-core'],
             [group: 'org.springframework.restdocs', name: 'spring-restdocs-core'],
             [group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc'],
+            // Required by org.springframework.test.web.servlet.result.MockMvcResultHandlers that references
+            // org.apache.commons.logging.Log
+            // Only happens with the Groovy compiler!
+            [group: 'org.slf4j', name: 'jcl-over-slf4j'],
     )
-    testRuntime(
+    integrationTestRuntime(
             [group: 'org.spockframework', name: 'spock-spring', version: spockVersion],
             [group: 'org.springframework.boot', name: 'spring-boot-test'],
             [group: 'org.mockito', name: 'mockito-core'],
@@ -127,7 +155,10 @@ springBoot {
 
 test {
     // show standard out and standard error of the test JVM(s) on the console
-    testLogging.showStandardStreams = true
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        showStandardStreams = true
+    }
 }
 
 distributions {

@@ -32,7 +32,7 @@ public class APIv1 {
     @GetMapping("/card-brand")
     public Map findBrand(@BIN @RequestParam String bin) {
         return prefixClassifier.findLabel(bin)
-                .map(n -> Collections.singletonMap("name", n))
+                .map(n -> Collections.singletonMap("brand", n))
                 .orElseThrow(ResourceNotFoundException::new);
     }
 }

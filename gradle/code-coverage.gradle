@@ -16,3 +16,15 @@ jacocoTestReport {
 test {
     finalizedBy jacocoTestReport
 }
+
+task jacocoIntegrationTestReport(type: JacocoReport) {
+    sourceSets sourceSets.main
+    executionData integrationTest
+    reports {
+        html.destination "${buildDir}/reports/jacoco/integrationTest/html"
+    }
+}
+
+integrationTest {
+    finalizedBy jacocoIntegrationTestReport
+}
