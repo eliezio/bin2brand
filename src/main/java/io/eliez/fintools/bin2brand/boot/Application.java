@@ -9,9 +9,9 @@ import org.springframework.context.annotation.ComponentScan;
         "io.eliez.fintools.bootext",
         "io.eliez.fintools.bin2brand.boot"
 })
-public class Application {
+public class Application {  //NOSONAR
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(Application.class, args);     //NOSONAR
     }
 }

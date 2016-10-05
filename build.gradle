@@ -40,6 +40,7 @@ apply plugin: 'docker'
 
 apply from: 'gradle/integration-test.gradle'
 apply from: 'gradle/code-coverage.gradle'
+apply from: 'gradle/code-quality.gradle'
 apply from: 'gradle/asciidoctor.gradle'
 apply from: 'gradle/reject-snapshot-dependencies.gradle'
 
@@ -118,6 +119,7 @@ dependencies {
             [group: 'org.hamcrest', name: 'hamcrest-core'],
             [group: 'org.springframework.restdocs', name: 'spring-restdocs-core'],
             [group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc'],
+
             // Required by org.springframework.test.web.servlet.result.MockMvcResultHandlers that references
             // org.apache.commons.logging.Log
             // Only happens with the Groovy compiler!

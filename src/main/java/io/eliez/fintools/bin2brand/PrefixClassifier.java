@@ -18,7 +18,7 @@ public class PrefixClassifier {
 
     public Optional<String> findLabel(String target) {
         return StreamEx.of(prefixes)
-                .findFirst(prefix -> prefix.contains(target))
+                .findFirst(prefix -> prefix.contains(target))   //NOSONAR -- likely a Sonarqube error
                 .map(LabeledPrefixRange::label);
     }
 
@@ -27,6 +27,7 @@ public class PrefixClassifier {
                 .mapValues(vv -> StreamEx.split(vv, ",").map(v -> PrefixRangeParser.parse(v, pattern)).toList())
                 .toMap());
     }
+
     private List<LabeledPrefixRange> loadPrefixes(Map<String, List<PrefixRange>> rangesTable) {
         final List<LabeledPrefixRange> ranges = EntryStream.of(rangesTable)
                 .flatMapKeyValue((k, vv) -> StreamEx.of(vv).map(v -> new LabeledPrefixRange(k, v)))

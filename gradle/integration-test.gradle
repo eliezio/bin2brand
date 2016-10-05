@@ -1,15 +1,14 @@
 
 sourceSets {
     integrationTest {
-        java.srcDir file('src/integration-test/java')
-        groovy.srcDir file('src/integration-test/groovy')
-        resources.srcDir  file('src/integration-test/resources')
+        java.srcDir file('src/integrationTest/java')
+        groovy.srcDir file('src/integrationTest/groovy')
+        resources.srcDir  file('src/integrationTest/resources')
     }
 }
 
 dependencies {
     integrationTestCompile sourceSets.main.output
-    integrationTestCompile sourceSets.test.output
     integrationTestCompile configurations.testCompile
     integrationTestRuntime configurations.testRuntime
 }
@@ -28,4 +27,4 @@ task integrationTest(type: Test) {
     }
 }
 
-//check.dependsOn integrationTest
+check.dependsOn integrationTest
