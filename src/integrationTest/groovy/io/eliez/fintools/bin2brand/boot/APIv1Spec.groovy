@@ -30,46 +30,46 @@ class APIv1Spec extends Specification {
     @Unroll
     def "fails with NOT_FOUND when BIN is unallocated to any brand (BIN=#bin)"() {
         expect:
-        mockMvc.perform(get('/v1/card-brand').param('bin', bin))
-                .andExpect(status().isNotFound())
-                .andDo(print())
+            mockMvc.perform(get('/v1/card-brand').param('bin', bin))
+                    .andExpect(status().isNotFound())
+                    .andDo(print())
 
         where:
-        bin << ['100000']
+            bin << ['100000']
     }
 
     @Unroll
     def "fails with BAD_REQUEST when BIN is ill-formed (#bin) -- #description"() {
         expect:
-        mockMvc.perform(get('/v1/card-brand').param('bin', bin))
-                .andExpect(status().isBadRequest())
-                .andDo(print())
+            mockMvc.perform(get('/v1/card-brand').param('bin', bin))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print())
 
         where:
-        bin       | description
-        '43210A'  | 'has a non-decimal char'
-        '4321321' | 'if longer thant 6 digits'
-        '43213'   | 'if shorter thant 6 digits'
+            bin       | description
+            '43210A'  | 'has a non-decimal char'
+            '4321321' | 'if longer thant 6 digits'
+            '43213'   | 'if shorter thant 6 digits'
     }
 
     @Unroll
     def "succeeds to find the brand of a valid BIN=#bin"() {
         expect: 'classification succeeds'
-        mockMvc.perform(get('/v1/card-brand').param('bin', bin))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath('$.brand', is(expectedBrand)))
-                .andDo(document('v1/get-card-brand',
-                        preprocessResponse(prettyPrint()),
-                        requestParameters(
-                                parameterWithName('bin').description('Bank Identification Number, i.e., the first 6 digits of a card number'),
-                        ),
-                        responseFields(
-                                fieldWithPath('brand').description('The brand\'s name')
-                )))
-                .andDo(print())
+            mockMvc.perform(get('/v1/card-brand').param('bin', bin))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath('$.brand', is(expectedBrand)))
+                    .andDo(document('v1/get-card-brand',
+                    preprocessResponse(prettyPrint()),
+                    requestParameters(
+                            parameterWithName('bin').description('Bank Identification Number, i.e., the first 6 digits of a card number'),
+                    ),
+                    responseFields(
+                            fieldWithPath('brand').description('The brand\'s name')
+                    )))
+                    .andDo(print())
 
         where:
-        bin      || expectedBrand
-        '376411' || 'Amex'
+            bin      || expectedBrand
+            '376411' || 'Amex'
     }
 }
