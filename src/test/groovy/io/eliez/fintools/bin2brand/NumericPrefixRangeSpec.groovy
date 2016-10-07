@@ -8,7 +8,7 @@ class NumericPrefixRangeSpec extends Specification {
     @Unroll
     def "accepts valid range spec: '#lower-#upper'"() {
         when:
-            def npr = PrefixRangeParser.parse("$lower-$upper", RangePattern.NUMERIC)
+            def npr = PrefixRangeParser.parseNumeric("$lower-$upper")
 
         then:
             npr.lower() == lower
@@ -24,7 +24,7 @@ class NumericPrefixRangeSpec extends Specification {
     @Unroll
     def "fails when range spec is invalid: '#rangeSpec'"() {
         when:
-            PrefixRangeParser.parse(rangeSpec, RangePattern.NUMERIC)
+            PrefixRangeParser.parseNumeric(rangeSpec)
 
         then:
             thrown(IllegalArgumentException)
