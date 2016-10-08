@@ -9,7 +9,6 @@ buildscript {
         classpath(
                 [group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: springBootVersion],
                 [group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.0.4'],
-                [group: 'se.transmode.gradle', name: 'gradle-docker', version: '1.2'],
         )
     }
 }
@@ -33,11 +32,14 @@ plugins {
     // Quality / Documentation Plugins
     id 'org.sonarqube' version '2.1'
     id 'org.asciidoctor.convert' version '1.5.3'
+
+    // Docker
+    id 'com.bmuschko.docker-java-application' version '3.0.3'
 }
 
 apply plugin: 'spring-boot'
 apply plugin: 'ca.cutterslade.analyze'
-apply plugin: 'docker'
+apply plugin: 'com.bmuschko.docker-java-application'
 
 apply from: 'gradle/integration-test.gradle'
 apply from: 'gradle/jacoco.gradle'
@@ -179,21 +181,15 @@ bootRun {
     systemProperties = System.properties
 }
 
-docker {
-    baseImage 'davidcaste/alpine-java-unlimited-jce'
-    maintainer 'Eliezio Oliveira "ebo@pobox.com"'
+dockerDistTar {
+    environmentVariable 'JAVA_OPTS', '-Xmx384m -Djava.security.egd=file:/dev/./urandom'
 }
 
-distDocker {
-    description "Packs the project's JVM application as a Docker image.\n\t\tUse 'docker.registry' to set registry's host and port"
-
-    tagVersion = "${version}" - ~/-.*/
-    registry = project.findProperty('docker.registry')
-
-    setEnvironment 'JAVA_OPTS', '-Xmx384m -Djava.security.egd=file:/dev/./urandom'
-    def appHome = "/${project.name}-${version}"
-    workingDir appHome
-    volume "$appHome/config"
-    exposePort 8080
+docker {
+    javaApplication {
+        baseImage = 'davidcaste/alpine-java-unlimited-jce'
+        maintainer = 'Eliezio Oliveira "ebo@pobox.com"'
+        tag = "${project.name}:" + ("${version}" - ~/-.*/)
+    }
 }
 
