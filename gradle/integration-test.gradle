@@ -18,7 +18,6 @@ task integrationTest(type: Test) {
     description 'Runs the integration tests.'
     testClassesDir = sourceSets.integrationTest.output.classesDir
     classpath = sourceSets.integrationTest.runtimeClasspath
-    //systemProperties['jar.path'] = jar.archivePath
 
     // show standard out and standard error of the test JVM(s) on the console
     testLogging {

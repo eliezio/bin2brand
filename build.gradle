@@ -20,6 +20,7 @@ plugins {
     id 'groovy'
     id 'application'
     id 'project-report'
+    id 'jacoco'
 
     // Dependency Management Support Plugins
     id 'com.github.ben-manes.versions' version '0.13.0'
@@ -39,16 +40,16 @@ apply plugin: 'ca.cutterslade.analyze'
 apply plugin: 'docker'
 
 apply from: 'gradle/integration-test.gradle'
-apply from: 'gradle/code-coverage.gradle'
-apply from: 'gradle/code-analysis.gradle'
+apply from: 'gradle/jacoco.gradle'
+apply from: 'gradle/sonarqube.gradle'
 apply from: 'gradle/asciidoctor.gradle'
-apply from: 'gradle/reject-snapshot-dependencies.gradle'
+apply from: 'gradle/dependency-analyze.gradle'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group = 'io.eliez.fintools'
-mainClassName = 'io.eliez.fintools.bin2brand.boot.Application'
+mainClassName = "${project.group}.${project.name}.boot.Application"
 
 ext {
     // Required for Spock snapshot verions

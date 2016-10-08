@@ -1,0 +1,11 @@
+
+sonarqube {
+    properties {
+        property 'sonar.scm.provider', 'git'
+        property 'sonar.language', 'java'
+        properties['sonar.tests'] += sourceSets.integrationTest.allSource.srcDirs.findAll { it.exists() }
+        // See: http://docs.sonarqube.org/display/PLUG/Code+Coverage+by+Integration+Tests+for+Java+Project
+        properties['sonar.jacoco.itReportPath'] = "$buildDir/jacoco/integrationTest.exec"
+    }
+}
+

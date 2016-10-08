@@ -1,8 +1,6 @@
 // Tips on properly configuring Jacoco found at:
 // http://jworks.nl/2013/06/03/jacoco-code-coverage-with-gradle/
 
-apply plugin: "jacoco"
-
 jacoco {
     // Version must be 0.7.5+ to make .exec compatible with Jenkins Jacoco Plugin 2.0+
     toolVersion = '0.7.7.201606060606'

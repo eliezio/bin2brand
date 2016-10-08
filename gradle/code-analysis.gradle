@@ -1,8 +1,0 @@
-
-sonarqube {
-    properties {
-        property 'sonar.scm.provider', 'git'
-        property 'sonar.language', 'java'
-    }
-}
-
