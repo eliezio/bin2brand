@@ -59,6 +59,8 @@ ext {
     spockReportsVersion = '1.2.13'
     spockVersion = '1.1-groovy-2.4-SNAPSHOT'
     validationApiVersion = '1.1.0.Final'
+
+    dockerOrganization = 'ebo'
 }
 
 repositories {
@@ -186,10 +188,11 @@ dockerDistTar {
 }
 
 docker {
+    url = System.properties['docker.host']
     javaApplication {
         baseImage = 'davidcaste/alpine-java-unlimited-jce'
         maintainer = 'Eliezio Oliveira "ebo@pobox.com"'
-        tag = "${project.name}:" + ("${version}" - ~/-.*/)
+        tag = System.properties['docker.registry'] + "${dockerOrganization}/${project.name}:" + ("${version}" - ~/-.*/)
     }
 }
 
