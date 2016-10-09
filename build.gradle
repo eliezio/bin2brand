@@ -192,7 +192,7 @@ docker {
     javaApplication {
         baseImage = 'davidcaste/alpine-java-unlimited-jce'
         maintainer = 'Eliezio Oliveira "ebo@pobox.com"'
-        tag = System.properties['docker.registry'] + "${dockerOrganization}/${project.name}:" + ("${version}" - ~/-.*/)
+        tag = System.properties['docker.registry'] + "/${dockerOrganization}/${project.name}:" + ("${version}" - ~/-.*/)
     }
 }
 
