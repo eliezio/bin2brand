@@ -1,3 +1,3 @@
 # bin2brand
 
-https://travis-ci.org/eliezio/bin2brand.svg?branch=master
+[![Build Status](https://travis-ci.org/eliezio/bin2brand.svg?branch=master)](https://travis-ci.org/eliezio/bin2brand)
