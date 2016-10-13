@@ -46,6 +46,7 @@ apply from: 'gradle/jacoco.gradle'
 apply from: 'gradle/sonarqube.gradle'
 apply from: 'gradle/asciidoctor.gradle'
 apply from: 'gradle/dependency-analyze.gradle'
+apply from: 'gradle/ben-manes.versions.gradle'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -58,7 +59,7 @@ ext {
     spockVersion = '1.1-groovy-2.4-rc-2'
     validationApiVersion = '1.1.0.Final'
 
-    dockerOrganization = 'ebo'
+    organization = 'ebo'
 }
 
 repositories {
@@ -136,35 +137,20 @@ dependencies {
     )
 }
 
-analyzeClassesDependencies {
-    justWarn = true
-}
-
-analyzeTestClassesDependencies {
-    justWarn = true
-}
-
-gitProperties {
-    dateFormat = "yyyy-MM-dd'T'HH:mmZ"
-}
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
 }
 
-springBoot {
-    buildInfo()
-}
-
-test {
+tasks.withType(Test) {
     // show standard out and standard error of the test JVM(s) on the console
     testLogging {
-        events 'passed', 'skipped', 'failed'
+        events 'started', 'passed', 'skipped', 'failed'
         showStandardStreams = true
     }
 }
 
+// plugin: distributions
 distributions {
     main {
         contents {
@@ -173,6 +159,21 @@ distributions {
             }
         }
     }
+}
+
+// plugin: com.github.ben-manes.versions
+tasks.withType(ca.cutterslade.gradle.analyze.AnalyzeDependenciesTask) {
+    justWarn = true
+}
+
+// plugin: com.gorylenko.gradle-git-properties
+gitProperties {
+    dateFormat = "yyyy-MM-dd'T'HH:mmZ"
+}
+
+// plugin: spring-boot
+springBoot {
+    buildInfo()
 }
 
 bootRun {
@@ -189,7 +190,7 @@ docker {
     javaApplication {
         baseImage = 'davidcaste/alpine-java-unlimited-jce'
         maintainer = 'Eliezio Oliveira "ebo@pobox.com"'
-        tag = System.properties['docker.registry'] + "/${dockerOrganization}/${project.name}:" + ("${version}" - ~/-.*/)
+        tag = System.properties['docker.registry'] + "/${organization}/${project.name}:" + ("${version}" - ~/-.*/)
     }
 }
 
