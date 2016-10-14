@@ -4,6 +4,7 @@ sudo: false
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
   directories:
@@ -12,6 +13,8 @@ cache:
 
 jdk:
   - oraclejdk8
+
+install: true
 
 script:
   - ./gradlew test build
