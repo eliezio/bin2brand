@@ -17,4 +17,4 @@ jdk:
 install: true
 
 script:
-  - ./gradlew test build
+  - ./gradlew test build -Dspring.output.ansi.enabled=always
