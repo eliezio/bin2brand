@@ -6,10 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath(
-                [group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: springBootVersion],
-                [group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.0.4'],
-        )
+        classpath group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: springBootVersion
     }
 }
 
@@ -40,7 +37,6 @@ plugins {
 }
 
 apply plugin: 'spring-boot'
-apply plugin: 'ca.cutterslade.analyze'
 apply plugin: 'com.bmuschko.docker-java-application'
 
 apply from: 'gradle/integration-test.gradle'
@@ -168,11 +164,6 @@ distributions {
             }
         }
     }
-}
-
-// plugin: com.github.ben-manes.versions
-tasks.withType(ca.cutterslade.gradle.analyze.AnalyzeDependenciesTask) {
-    justWarn = true
 }
 
 // plugin: com.gorylenko.gradle-git-properties

@@ -1,15 +1,15 @@
-
-allprojects {
-    dependencyUpdates.resolutionStrategy = {
-        componentSelection { rules ->
-            rules.all { ComponentSelection selection ->
-                boolean rejected = ["alpha", "beta", "b\\d+", "rc", "cr", "m"].any { qualifier ->
-                    selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
-                }
-                if (rejected) {
-                    selection.reject("Release candidate")
-                }
-            }
-        }
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'ca.cutterslade.gradle:gradle-dependency-analyze:1.0.4'
     }
 }
+
+apply plugin: ca.cutterslade.gradle.analyze.AnalyzeDependenciesPlugin
+
+tasks.withType(ca.cutterslade.gradle.analyze.AnalyzeDependenciesTask) {
+    justWarn = true
+}
+
