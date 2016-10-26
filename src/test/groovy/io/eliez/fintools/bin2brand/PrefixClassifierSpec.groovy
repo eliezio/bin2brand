@@ -36,11 +36,11 @@ class PrefixClassifierSpec extends Specification {
             ], RangePattern.NUMERIC)
 
         when:
-            final Optional<String> brand = prefixClassifier.findLabel(bin)
+            final String brand = prefixClassifier.findLabel(bin)
 
         then:
-            brand.isPresent()
-            brand.get() == expectedBrand
+            brand != null
+            brand == expectedBrand
 
         where:
             bin      || expectedBrand

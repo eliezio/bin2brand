@@ -11,8 +11,8 @@ class NumericPrefixRangeSpec extends Specification {
             def npr = PrefixRangeParser.parseNumeric("$lower-$upper")
 
         then:
-            npr.lower() == lower
-            npr.upper() == upper
+            npr.lower == lower
+            npr.upper == upper
 
         where:
             lower | upper

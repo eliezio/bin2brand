@@ -1,6 +1,17 @@
 buildscript {
+    ext {
+        kotlin_version = '1.0.5-eap-66'
+    }
     repositories {
         jcenter()
+        maven {
+            url 'http://dl.bintray.com/kotlin/kotlin-eap'
+        }
+    }
+    dependencies {
+        classpath(
+                [group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: kotlin_version],
+        )
     }
 }
 
@@ -33,6 +44,8 @@ plugins {
     id 'com.bmuschko.docker-java-application' version '3.0.5'
 }
 
+apply plugin: 'kotlin'
+
 apply from: 'gradle/integration-test.gradle'
 apply from: 'gradle/jacoco.gradle'
 apply from: 'gradle/sonarqube.gradle'
@@ -64,6 +77,13 @@ buildScan {
 
 repositories {
     jcenter()
+    maven {
+        url 'http://dl.bintray.com/kotlin/kotlin-eap'
+    }
+}
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
 }
 
 configurations {
@@ -78,6 +98,7 @@ dependencies {
             [group: 'org.projectlombok', name: 'lombok'],
     )
     compile(
+            [group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version],
             [group: 'one.util', name: 'streamex', version: streamExVersion],
 
             [group: 'org.springframework.boot', name: 'spring-boot'],
@@ -189,4 +210,3 @@ docker {
         tag = System.properties['docker.registry'] + "/${organization}/${project.name}:" + ("${version}" - ~/-.*/)
     }
 }
-
