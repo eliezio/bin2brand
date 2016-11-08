@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.4.1.RELEASE'
+        springBootVersion = '1.4.2.RELEASE'
     }
     repositories {
         jcenter()
@@ -54,7 +54,6 @@ mainClassName = "${project.group}.${project.name}.boot.Application"
 
 ext {
     spockReportsVersion = '1.2.13'
-    spockVersion = '1.1-groovy-2.4-rc-2'
     validationApiVersion = '1.1.0.Final'
 
     organization = 'ebo'
@@ -107,7 +106,7 @@ dependencies {
     )
     testCompile(
             [group: 'org.codehaus.groovy', name: 'groovy-all'],
-            [group: 'org.spockframework', name: 'spock-core', version: spockVersion],
+            [group: 'org.spockframework', name: 'spock-core'],
     )
     testRuntime(
             [group: 'com.athaydes', name: 'spock-reports', version: spockReportsVersion],
@@ -118,7 +117,7 @@ dependencies {
     )
     integrationTestCompile(
             [group: 'org.codehaus.groovy', name: 'groovy-all'],
-            [group: 'org.spockframework', name: 'spock-core', version: spockVersion],
+            [group: 'org.spockframework', name: 'spock-core'],
             [group: 'org.springframework', name: 'spring-beans'],
             [group: 'org.springframework', name: 'spring-test'],
             [group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure'],
@@ -132,7 +131,7 @@ dependencies {
             [group: 'org.slf4j', name: 'jcl-over-slf4j'],
     )
     integrationTestRuntime(
-            [group: 'org.spockframework', name: 'spock-spring', version: spockVersion],
+            [group: 'org.spockframework', name: 'spock-spring'],
             [group: 'org.springframework.boot', name: 'spring-boot-test'],
             [group: 'org.mockito', name: 'mockito-core'],
             [group: 'com.jayway.jsonpath', name: 'json-path'],
