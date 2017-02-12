@@ -11,7 +11,7 @@ pipeline {
 
     stages {
 
-        stage('build') {
+        stage('Build') {
             steps {
                 sh './gradlew clean test build'
             }
@@ -22,7 +22,13 @@ pipeline {
             }
         }
 
-        stage('sonar') {
+        stage('Code Coverage') {
+            steps {
+                step([$class: 'JacocoPublisher', execPattern: 'build/jacoco/*.exec', classPattern: 'build/classes/main', sourcePattern: '**/src/main/java'])
+            }
+        }
+
+        stage('Static Code Aanlysis') {
             steps {
                 withSonarQubeEnv('sq1') {
                     sh "./gradlew --info --stacktrace sonarqube"
@@ -30,7 +36,7 @@ pipeline {
             }
         }
 
-        stage('docker image build & publish') {
+        stage('Docker Build & Publish') {
             steps {
                 sh './gradlew --stacktrace -Ddocker.host=$DOCKER_HOST -Ddocker.registry=$DOCKER_REGISTRY dockerPushImage'
             }
